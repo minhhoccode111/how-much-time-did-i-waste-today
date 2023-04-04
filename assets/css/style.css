@@ -1,0 +1,21 @@
+/* ######### Some root CSS ########### */
+
+:root {
+}
+/* ######### Some basic CSS ########### */
+*,
+::before,
+::after {
+  font-family: Arial, Helvetica, sans-serif;
+  scroll-behavior: smooth;
+}
+html {
+}
+body {
+}
+/* ######### Some reusable CSS ########### */
+.center {
+  display: grid;
+  place-items: center;
+}
+/* ######### Some specific CSS ########### */
