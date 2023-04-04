@@ -1,21 +1,85 @@
 /* ######### Some root CSS ########### */
 
 :root {
+  font-size: 10px;
+  --primary-font-color: navy;
+  --primary-bg-color: wheat;
+  --secondary-bg-color: plum;
+  --secondary-font-color: palegreen;
+  --primary-font-size: 10px;
 }
 /* ######### Some basic CSS ########### */
 *,
 ::before,
 ::after {
   font-family: Arial, Helvetica, sans-serif;
+  color: var(--primary-font-color);
   scroll-behavior: smooth;
 }
 html {
 }
 body {
+  font-size: 1.6rem;
+  min-height: 100vh;
+  background-color: rgb(20, 20, 20);
+}
+a {
+  all: unset;
+  cursor: pointer;
+}
+h1 {
+  font-size: 3rem;
 }
 /* ######### Some reusable CSS ########### */
 .center {
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 /* ######### Some specific CSS ########### */
+.wrapper {
+  display: block;
+  height: 10;
+  width: 100%;
+  max-width: 90rem;
+  background-color: var(--primary-bg-color);
+  margin: 0 auto;
+}
+.header {
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.header > .logo {
+  margin: 1rem;
+}
+.header > .nav {
+}
+.header > .nav > .nav-list {
+  display: flex;
+  gap: 3rem;
+  font-size: 2.4rem;
+  text-transform: capitalize;
+}
+.down-icon {
+  font-size: 1rem;
+  padding-bottom: 0.4rem;
+}
+.header > .nav > .nav-list > li {
+  padding: 0.5rem;
+}
+.header > .nav > .nav-list > li:hover {
+  background-color: var(--secondary-bg-color);
+  border-radius: 0.5rem;
+  color: var(--secondary-font-color);
+  text-decoration: underline;
+  text-decoration-color: black;
+}
+
+.aside {
+}
+.main {
+}
+.footer {
+}
