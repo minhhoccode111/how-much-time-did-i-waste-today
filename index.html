@@ -18,27 +18,88 @@
             <a href="#" class="logo-link">HMTDIWT?</a>
           </h1>
         </div>
-        <nav class="nav center">
-          <ul class="nav-list">
-            <li class="nav-item">
-              <a href="#home" class="nav-link">home</a>
-            </li>
-            <li class="nav-item">
-              <a href="#apps" class="nav-link"
-                >apps <span class="down-icon">&#128315;</span></a
-              >
-            </li>
-            <li class="nav-item">
-              <a href="#about" class="nav-link">about</a>
-            </li>
-            <li class="nav-item">
-              <a href="#contact" class="nav-link">contact</a>
-            </li>
-          </ul>
-        </nav>
       </header>
-      <aside class="aside"></aside>
-      <main class="main"></main>
+      <hr />
+      <main class="main">
+        <section class="getInput" id="getInput">
+          <h1>HMTDIWT?</h1>
+          <hr />
+          <form action="#" id="form" class="form" data-form>
+            <h2 class="">Time: <span class="time">0</span> minutes</h2>
+            <hr />
+            <div class="plus-buttons">
+              <button type="button" data-plus30 title="Plus 30" class="btn">
+                +30
+              </button>
+              <button type="button" data-plus10 title="Plus 10" class="btn">
+                +10
+              </button>
+              <button type="button" data-plus5 title="Plus 5" class="btn">
+                +5
+              </button>
+              <button type="button" data-plus1 title="Plus 1" class="btn">
+                +1
+              </button>
+            </div>
+            <hr />
+            <div class="minus-buttons">
+              <button type="button" data-minus30 title="Minus 30" class="btn">
+                -30
+              </button>
+              <button type="button" data-minus10 title="Minus 10" class="btn">
+                -10
+              </button>
+              <button type="button" data-minus5 title="Minus 5" class="btn">
+                -5
+              </button>
+              <button type="button" data-minus1 title="Minus 1" class="btn">
+                -1
+              </button>
+            </div>
+            <hr />
+            <div class="radio-buttons">
+              <label for="game">Game</label>
+              <input type="radio" id="game" name="fav_language" value="game" />
+              <br />
+              <label for="socialmedia">Social media</label>
+              <input
+                type="radio"
+                id="socialmedia"
+                name="fav_language"
+                value="socialmedia"
+              />
+              <br />
+              <label for="daily">Daily activities</label>
+              <input
+                type="radio"
+                id="daily"
+                name="fav_language"
+                value="JavaScript"
+              />
+              <br />
+              <label for="donothing">Do nothing</label>
+              <input
+                type="radio"
+                id="donothing"
+                name="fav_language"
+                value="donothing"
+              />
+              <br />
+              <label for="others">Others</label>
+              <input
+                type="radio"
+                id="others"
+                name="fav_language"
+                value="others"
+              />
+            </div>
+            <hr />
+            <input class="submit" type="submit" title="Click to submit" />
+          </form>
+        </section>
+        <section id="showToday" class="showToday"></section>
+        <section id="showHistory" class="showHistory"></section>
+      </main>
       <footer class="footer"></footer>
     </div>
   </body>

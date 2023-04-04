@@ -30,11 +30,17 @@ a {
 h1 {
   font-size: 3rem;
 }
+h2 {
+  font-size: 2rem;
+}
 /* ######### Some reusable CSS ########### */
 .center {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.none {
+  display: none;
 }
 /* ######### Some specific CSS ########### */
 .wrapper {
@@ -44,6 +50,7 @@ h1 {
   max-width: 90rem;
   background-color: var(--primary-bg-color);
   margin: 0 auto;
+  border-radius: 0.5rem;
 }
 .header {
   padding: 1rem;
@@ -52,34 +59,31 @@ h1 {
   justify-content: space-between;
 }
 .header > .logo {
-  margin: 1rem;
+  padding: 1rem;
 }
-.header > .nav {
-}
-.header > .nav > .nav-list {
-  display: flex;
-  gap: 3rem;
-  font-size: 2.4rem;
-  text-transform: capitalize;
-}
-.down-icon {
-  font-size: 1rem;
-  padding-bottom: 0.4rem;
-}
-.header > .nav > .nav-list > li {
-  padding: 0.5rem;
-}
-.header > .nav > .nav-list > li:hover {
+.header > .logo:hover {
   background-color: var(--secondary-bg-color);
   border-radius: 0.5rem;
   color: var(--secondary-font-color);
   text-decoration: underline;
-  text-decoration-color: black;
 }
 
-.aside {
-}
 .main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
-.footer {
+.getInput .form {
+}
+.plus-buttons {
+  text-align: end;
+}
+.minus-buttons {
+  text-align: end;
+}
+.radio-buttons {
+  text-align: end;
+}
+.submit {
+  float: right;
 }
