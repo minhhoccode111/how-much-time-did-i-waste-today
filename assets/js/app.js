@@ -32,9 +32,11 @@ class Event {
         if (action.checked) {
           let getTodayDate = whatDayIsToday();
           let getTodayTime = whatTimeIsIt();
+          let getActivity = action.value;
+          let getMinutesCount = Number(minutesCount.textContent);
           let newAction = new Action(
-            Number(minutesCount.textContent),
-            action.value,
+            getMinutesCount,
+            getActivity,
             getTodayDate,
             getTodayTime
           );

@@ -28,12 +28,16 @@ a {
   cursor: pointer;
 }
 h1 {
-  font-size: 3rem;
+  font-size: 3.6rem;
   text-align: center;
 }
 h2 {
   text-align: center;
-  font-size: 2rem;
+  font-size: 3rem;
+}
+h3 {
+  text-align: center;
+  font-size: 2.4rem;
 }
 /* ######### Some reusable CSS ########### */
 .center {
@@ -122,4 +126,19 @@ hr.bold {
   cursor: pointer;
   /* width: 4rem; */
   max-width: 20vmin;
+}
+.activityItem {
+  /* display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  gap: 1rem; */
+}
+.itemTodayActivityTimeIs {
+  font-size: 1.2rem;
+}
+.activityAndMinutesContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
