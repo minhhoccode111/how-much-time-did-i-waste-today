@@ -22,10 +22,10 @@
       <hr />
       <main class="main">
         <section class="getInput" id="getInput">
-          <h1>HMTDIWT?</h1>
+          <h1>Input form</h1>
           <hr />
           <form action="#" id="form" class="form" data-form>
-            <h2 class="">Time: <span class="time">0</span> minutes</h2>
+            <h2 class="showTime">Time: <span id="time">0</span> minutes</h2>
             <hr />
             <div class="plus-buttons">
               <button type="button" data-plus30 title="Plus 30" class="btn">
@@ -59,13 +59,13 @@
             <hr />
             <div class="radio-buttons">
               <label for="game">Game</label>
-              <input type="radio" id="game" name="fav_language" value="game" />
+              <input type="radio" id="game" name="Action" value="game" />
               <br />
               <label for="socialmedia">Social media</label>
               <input
                 type="radio"
                 id="socialmedia"
-                name="fav_language"
+                name="Action"
                 value="socialmedia"
               />
               <br />
@@ -73,15 +73,15 @@
               <input
                 type="radio"
                 id="daily"
-                name="fav_language"
-                value="JavaScript"
+                name="Action"
+                value="dailyactivities"
               />
               <br />
               <label for="donothing">Do nothing</label>
               <input
                 type="radio"
                 id="donothing"
-                name="fav_language"
+                name="Action"
                 value="donothing"
               />
               <br />
@@ -89,16 +89,21 @@
               <input
                 type="radio"
                 id="others"
-                name="fav_language"
+                name="Action"
                 value="others"
+                checked
               />
             </div>
             <hr />
             <input class="submit" type="submit" title="Click to submit" />
           </form>
         </section>
-        <section id="showToday" class="showToday"></section>
-        <section id="showHistory" class="showHistory"></section>
+        <hr class="align-stretch" />
+        <section id="showToday" class="showToday" data-today>
+          <h1>Today</h1>
+        </section>
+        <hr class="align-stretch" />
+        <section id="showHistory" class="showHistory" data-history></section>
       </main>
       <footer class="footer"></footer>
     </div>
