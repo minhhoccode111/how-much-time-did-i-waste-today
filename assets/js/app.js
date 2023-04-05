@@ -3,47 +3,59 @@
 //variables to use
 let todayActions = [];
 let today = {};
+today = {};
 let history = {};
 
 // select html elements
-const submitBtn = document.getElementById("submit-button");
-const form = document.querySelector("[data-form]");
-const buttons = document.querySelectorAll(".btn");
-const time = document.querySelector("#time");
-const actions = document.querySelectorAll('[name="Action"]');
+const getInputForm = document.querySelector("[data-getInputForm]");
+const addMinutesButtons = document.querySelectorAll(".btn");
+const minutesCount = document.querySelector("#minutesCount");
+const activityRadioButtons = document.querySelectorAll('[name="Activity"]');
+const todayDateIs = document.querySelector("#todayDateIs");
 
 //action and its information etc...
 class Action {
-  constructor(minutes, activity, today) {
+  constructor(minutes, activity, todayIs, timeIs) {
     this.minutes = minutes;
     this.activity = activity;
-    this.today = today;
+    this.todayIs = todayIs;
+    this.timeIs = timeIs;
   }
 }
 
 //event listener
 class Event {
-  static form() {
-    form.addEventListener("submit", (e) => {
+  static formSubmit() {
+    getInputForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      actions.forEach((action) => {
+      activityRadioButtons.forEach((action) => {
         if (action.checked) {
-          let getTodayDate = getToday();
-          todayActions.push(
-            new Action(Number(time.textContent), action.value, getTodayDate)
+          let getTodayDate = whatDayIsToday();
+          let getTodayTime = whatTimeIsIt();
+          let newAction = new Action(
+            Number(minutesCount.textContent),
+            action.value,
+            getTodayDate,
+            getTodayTime
           );
+          todayActions.push(newAction);
         }
       });
       console.log(todayActions);
     });
   }
-  static addMinutes() {
-    buttons.forEach((button) => {
-      button.addEventListener("mousedown", (e) => {
-        let timeValue = Number(time.textContent);
-        let addValue = Number(e.target.textContent);
-        time.innerHTML = timeValue + addValue;
+  static addMinutesClick() {
+    addMinutesButtons.forEach((button) => {
+      button.addEventListener("click", (e) => {
+        let currentMinutes = Number(minutesCount.textContent);
+        let addUpValue = Number(e.target.textContent);
+        minutesCount.innerHTML = currentMinutes + addUpValue;
       });
+    });
+  }
+  static showTodayWhenDOMLoaded() {
+    window.addEventListener("DOMContentLoaded", () => {
+      todayDateIs.innerHTML = whatDayIsToday();
     });
   }
 }
@@ -55,7 +67,7 @@ class UI {}
 class Storage {}
 
 //functions for  hoisting
-function getToday() {
+function whatDayIsToday() {
   let months = [
     "January",
     "February",
@@ -71,15 +83,20 @@ function getToday() {
     "December",
   ];
   let date = new Date();
-  let hours = date.getHours();
-  let minutes = date.getMinutes();
   let month = date.getMonth();
   month = months[month];
   let day = date.getDate();
   let year = date.getFullYear();
-  return `${hours}:${minutes} - ${year} ${month} ${day}`;
+  return `${year} ${month} ${day}`;
+}
+function whatTimeIsIt() {
+  let date = new Date();
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+  return `${hours}:${minutes}`;
 }
 
 //call methods
-Event.form();
-Event.addMinutes();
+Event.formSubmit();
+Event.addMinutesClick();
+Event.showTodayWhenDOMLoaded();

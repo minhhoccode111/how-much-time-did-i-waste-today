@@ -19,13 +19,20 @@
           </h1>
         </div>
       </header>
-      <hr />
+      <hr class="bold" />
       <main class="main">
-        <section class="getInput" id="getInput">
+        <section class="getInputSection" id="getInputSection">
           <h1>Input form</h1>
           <hr />
-          <form action="#" id="form" class="form" data-form>
-            <h2 class="showTime">Time: <span id="time">0</span> minutes</h2>
+          <form
+            action="#"
+            id="getInputForm"
+            class="getInputForm"
+            data-getInputForm
+          >
+            <h2 class="showTime">
+              Time: <span id="minutesCount">0</span> minutes
+            </h2>
             <hr />
             <div class="plus-buttons">
               <button type="button" data-plus30 title="Plus 30" class="btn">
@@ -59,13 +66,13 @@
             <hr />
             <div class="radio-buttons">
               <label for="game">Game</label>
-              <input type="radio" id="game" name="Action" value="game" />
+              <input type="radio" id="game" name="Activity" value="game" />
               <br />
               <label for="socialmedia">Social media</label>
               <input
                 type="radio"
                 id="socialmedia"
-                name="Action"
+                name="Activity"
                 value="socialmedia"
               />
               <br />
@@ -73,7 +80,7 @@
               <input
                 type="radio"
                 id="daily"
-                name="Action"
+                name="Activity"
                 value="dailyactivities"
               />
               <br />
@@ -81,7 +88,7 @@
               <input
                 type="radio"
                 id="donothing"
-                name="Action"
+                name="Activity"
                 value="donothing"
               />
               <br />
@@ -89,21 +96,33 @@
               <input
                 type="radio"
                 id="others"
-                name="Action"
+                name="Activity"
                 value="others"
                 checked
               />
             </div>
             <hr />
-            <input class="submit" type="submit" title="Click to submit" />
+            <input class="submit" type="submit" title="Submit this form." />
           </form>
         </section>
-        <hr class="align-stretch" />
-        <section id="showToday" class="showToday" data-today>
+        <hr class="align-stretch bold" />
+        <section
+          id="showTodaySection"
+          class="showTodaySection"
+          data-showTodaySection
+        >
           <h1>Today</h1>
+          <hr />
+          <h2 id="todayDateIs"></h2>
         </section>
-        <hr class="align-stretch" />
-        <section id="showHistory" class="showHistory" data-history></section>
+        <hr class="align-stretch bold" />
+        <section
+          id="showHistorySection"
+          class="showHistorySection"
+          data-historySection
+        >
+          <h1>History</h1>
+        </section>
       </main>
       <footer class="footer"></footer>
     </div>
