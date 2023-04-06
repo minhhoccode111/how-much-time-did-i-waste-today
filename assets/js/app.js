@@ -1,13 +1,31 @@
 // console.log("Hello world from app.js");
 
+//storage
+class Storage {
+  static setTodayActionsToStorage(arr) {
+    const todayDate = whatDayIsToday(); //remember to change back
+    // const todayDate = "2023 April 7";
+    localStorage.setItem(todayDate, JSON.stringify(arr));
+  }
+  static getTodayActionsFromStorage() {
+    const todayDate = whatDayIsToday();
+    let storage =
+      localStorage.getItem(todayDate) === null
+        ? []
+        : JSON.parse(localStorage.getItem(todayDate));
+    // let storage = []; //use this to setup and remember to change back
+    return storage;
+  }
+}
+
 //variables to use
-let todayActions = [];
+let todayActions = Storage.getTodayActionsFromStorage();
 let today = {};
 today = {};
 let history = {};
 const translateActionsValueTo = {
   others: "Others",
-  donothing: "Do nothing",
+  donothing: "Do Nothing",
   game: "Game",
   socialmedia: "Social Media",
   dailyactivities: "Daily Activities",
@@ -33,9 +51,8 @@ class Action {
     this.todayIs = todayIs;
     this.timeIs = timeIs;
   }
-  pushToTodayActionsAndShowList() {
+  pushToTodayActions() {
     todayActions.push(this);
-    UI.callAllUIMethodsOnce();
     console.log(todayActions);
   }
 }
@@ -45,7 +62,6 @@ class Event {
   static formSubmit() {
     getInputForm.addEventListener("submit", (e) => {
       e.preventDefault();
-
       let getTodayDate = whatDayIsToday();
       let getTodayTime = whatTimeIsIt();
       let getMinutesCount = Number(minutesCount.textContent);
@@ -54,13 +70,16 @@ class Event {
       activityRadioButtons.forEach((action) => {
         if (action.checked) getActivity = translateActionsValueTo[action.value];
       });
+      UI.updateSpecificActivityTotalMinutes(getActivity, getMinutesCount);
       let newAction = new Action(
         getMinutesCount,
         getActivity,
         getTodayDate,
         getTodayTime
       );
-      newAction.pushToTodayActionsAndShowList();
+      newAction.pushToTodayActions();
+      Storage.setTodayActionsToStorage(todayActions);
+      UI.callAllUIMethodsOnce();
     });
   }
   static addMinutesClick() {
@@ -75,12 +94,13 @@ class Event {
   static showTodayWhenDOMLoaded() {
     window.addEventListener("DOMContentLoaded", () => {
       todayDateIs.innerHTML = whatDayIsToday();
+      UI.callAllUIMethodsOnce();
     });
   }
   static callAllEventListenerMethods() {
+    Event.showTodayWhenDOMLoaded();
     Event.formSubmit();
     Event.addMinutesClick();
-    Event.showTodayWhenDOMLoaded();
   }
 }
 
@@ -88,32 +108,41 @@ class Event {
 class UI {
   static showTodayActivitiesList() {
     let html;
-    if (todayActions.length > 1) {
+    if (todayActions.length >= 1) {
+      //if length > 1
       html = todayActions
-        .map((action) => {
+        .map((action, index) => {
+          if (index === 0) {
+            //then first element don't have <hr> on top
+            return `<li class="activityItem">
+            <p class="itemTodayActivityTimeIs">${action.timeIs}</p>
+            <div class="activityAndMinutesContainer">
+            <p class="itemTodayActivity">${action.activity}</p>
+            <p class="itemTodayMinutes">${action.minutes}</p>
+            </div>
+            </li>`;
+          }
+          //every other elements have <hr> on top
           return `<li class="activityItem">
-          <hr/>
-        <p class="itemTodayActivityTimeIs">${action.timeIs}</p>
-        <div class="activityAndMinutesContainer">
-        <p class="itemTodayActivity">${action.activity}</p>
-        <p class="itemTodayMinutes">${action.minutes}</p>
-        </div>
-        </li>`;
+            <hr/>
+            <p class="itemTodayActivityTimeIs">${action.timeIs}</p>
+            <div class="activityAndMinutesContainer">
+            <p class="itemTodayActivity">${action.activity}</p>
+            <p class="itemTodayMinutes">${action.minutes}</p>
+            </div>
+            </li>`;
         })
         .join(" ");
     }
-    if (todayActions.length === 1) {
-      html = todayActions
-        .map((action) => {
-          return `<li class="activityItem">
-        <p class="itemTodayActivityTimeIs">${action.timeIs}</p>
-        <div class="activityAndMinutesContainer">
-        <p class="itemTodayActivity">${action.activity}</p>
-        <p class="itemTodayMinutes">${action.minutes}</p>
-        </div>
-        </li>`;
-        })
-        .join(" ");
+    if (todayActions.length === 0) {
+      //if length = 0 then show default html
+      html = `<li class="activityItem">
+      <p class="itemTodayActivityTimeIs">00:00</p>
+      <div class="activityAndMinutesContainer">
+        <p class="itemTodayActivity">Others</p>
+        <p class="itemTodayMinutes">0</p>
+      </div>
+    </li>`;
     }
     todayActivitiesContainer.innerHTML = html;
   }
@@ -128,15 +157,20 @@ class UI {
     minutesCount.innerHTML = "0";
     radioButtonsNamedOthers.checked = true;
   }
+  static updateSpecificActivityTotalMinutes(activity, minutes) {
+    const stringConvert = activity.split(" ").join("");
+    const idOfThatSpecificActivity = `totalFor${stringConvert}`;
+    console.log(idOfThatSpecificActivity);
+    const element = document.getElementById(idOfThatSpecificActivity);
+    const elementInnerHTMLNumber = Number(element.innerHTML) + minutes;
+    element.innerHTML = elementInnerHTMLNumber;
+  }
   static callAllUIMethodsOnce() {
     UI.showTodayActivitiesList();
     UI.showTotalMinutesToday();
     UI.resetInputFormToDefault();
   }
 }
-
-//storage
-class Storage {}
 
 //functions for  hoisting
 function whatDayIsToday() {
@@ -167,6 +201,7 @@ function whatTimeIsIt() {
   let minutes = date.getMinutes();
   return `${hours}:${minutes}`;
 }
+function groupByDate() {}
 
 //call methods
 Event.callAllEventListenerMethods();

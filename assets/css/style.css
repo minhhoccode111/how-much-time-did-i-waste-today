@@ -46,7 +46,7 @@ h3 {
   justify-content: center;
 }
 .none {
-  display: none;
+  display: none !important;
 }
 .align-stretch {
   align-self: stretch;
@@ -148,4 +148,15 @@ hr.bold {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+#elementToggleToShow {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+#elementToggleToShow > * {
+  display: flex;
+  justify-content: space-between;
+}
+#elementToggleToShow > * > span {
 }
