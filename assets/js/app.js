@@ -4,8 +4,9 @@
 class Storage {
   static setTodayActionsToStorage(arr) {
     const todayDate = whatDayIsToday(); //remember to change back
-    // const todayDate = "2023 April 7";
+    // todayDate = "2023 April 7";
     localStorage.setItem(todayDate, JSON.stringify(arr));
+    // localStorage.setItem(todayDate, JSON.stringify([])); //use this line to reset localStorage, remember to change back
   }
   static getTodayActionsFromStorage() {
     const todayDate = whatDayIsToday();
@@ -13,16 +14,24 @@ class Storage {
       localStorage.getItem(todayDate) === null
         ? []
         : JSON.parse(localStorage.getItem(todayDate));
-    // let storage = []; //use this to setup and remember to change back
+    // storage = []; //use this line to reset localStorage, remember to change back
+    return storage;
+  }
+  static setTodayActionsToStorageHistory(obj) {
+    localStorage.setItem("storageHistory", JSON.stringify(obj));
+  }
+  static getTodayActionsFromStorageHistory() {
+    let storage =
+      localStorage.getItem("storageHistory") === null
+        ? {}
+        : JSON.parse(localStorage.getItem("storageHistory"));
     return storage;
   }
 }
 
 //variables to use
 let todayActions = Storage.getTodayActionsFromStorage();
-let today = {};
-today = {};
-let history = {};
+let history = Storage.getTodayActionsFromStorageHistory();
 const translateActionsValueTo = {
   others: "Others",
   donothing: "Do Nothing",
@@ -51,9 +60,8 @@ class Action {
     this.todayIs = todayIs;
     this.timeIs = timeIs;
   }
-  pushToTodayActions() {
+  pushToTodayActionsAndUpdateHistory() {
     todayActions.push(this);
-    console.log(todayActions);
   }
 }
 
@@ -70,16 +78,19 @@ class Event {
       activityRadioButtons.forEach((action) => {
         if (action.checked) getActivity = translateActionsValueTo[action.value];
       });
-      UI.updateSpecificActivityTotalMinutes(getActivity, getMinutesCount);
       let newAction = new Action(
         getMinutesCount,
         getActivity,
         getTodayDate,
         getTodayTime
       );
-      newAction.pushToTodayActions();
+      newAction.pushToTodayActionsAndUpdateHistory();
       Storage.setTodayActionsToStorage(todayActions);
+      history = groupByDate(todayActions, "todayIs");
+      Storage.setTodayActionsToStorageHistory(history);
       UI.callAllUIMethodsOnce();
+      UI.updateEveryActivityTotalMinutes(); //FIXME
+      console.log(history);
     });
   }
   static addMinutesClick() {
@@ -95,6 +106,7 @@ class Event {
     window.addEventListener("DOMContentLoaded", () => {
       todayDateIs.innerHTML = whatDayIsToday();
       UI.callAllUIMethodsOnce();
+      UI.updateEveryActivityTotalMinutes();
     });
   }
   static callAllEventListenerMethods() {
@@ -157,13 +169,16 @@ class UI {
     minutesCount.innerHTML = "0";
     radioButtonsNamedOthers.checked = true;
   }
-  static updateSpecificActivityTotalMinutes(activity, minutes) {
-    const stringConvert = activity.split(" ").join("");
-    const idOfThatSpecificActivity = `totalFor${stringConvert}`;
-    console.log(idOfThatSpecificActivity);
-    const element = document.getElementById(idOfThatSpecificActivity);
-    const elementInnerHTMLNumber = Number(element.innerHTML) + minutes;
-    element.innerHTML = elementInnerHTMLNumber;
+  static updateEveryActivityTotalMinutes() {
+    todayActions.forEach((action) => {
+      const stringConvert = action["activity"].split(" ").join("");
+      const idOfThatSpecificActivity = `totalFor${stringConvert}`;
+
+      const element = document.getElementById(idOfThatSpecificActivity);
+      const elementInnerHTMLNumber =
+        Number(element.innerHTML) + action["minutes"];
+      element.innerHTML = elementInnerHTMLNumber;
+    });
   }
   static callAllUIMethodsOnce() {
     UI.showTodayActivitiesList();
@@ -201,7 +216,17 @@ function whatTimeIsIt() {
   let minutes = date.getMinutes();
   return `${hours}:${minutes}`;
 }
-function groupByDate() {}
+function groupByDate(objectsArray, property) {
+  //function takes 2 arguments that are: an objectsArray is an array contains many object inside it (todayActions) and a property is the property that you want to group by (todayIs to group by date)
+  return objectsArray.reduce((total, current) => {
+    //then we use reduce to loop through all object inside that array(todayActions), with current is the current object inside the array(todayActions) and total is an object return after every call (initial with an empty object)
+    const key = current[property];
+    //we declared key is an object property's value, but we declared it to use as a key of total object (total is an object returns after every loop) (Ex:todayActions[0][todayIs];//2023 April 6)
+    const value = total[key] ?? []; //?? operator check if first operand is null or undefined, if so, it will return the second operand, if not, it will return the first operand
+    //then we declared value variable is the value of total object's key property.if this value is null or undefined, it will return an empty array, if not, it will return the value of that key property.( value will be an array)
+    return { ...total, [key]: [...value, current] };
+  }, {});
+}
 
 //call methods
 Event.callAllEventListenerMethods();
