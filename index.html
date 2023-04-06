@@ -122,16 +122,33 @@
               <p class="itemTodayMinutes">Minutes</p>
             </div>
           </div>
-          <hr />
+          <hr class="bold" />
           <ul id="activitiesListContainer">
             <li class="activityItem">
-              <p class="itemTodayActivityTimeIs">19:49</p>
+              <p class="itemTodayActivityTimeIs">00:00</p>
               <div class="activityAndMinutesContainer">
-                <p class="itemTodayActivity">Do nothing</p>
-                <p class="itemTodayMinutes">21</p>
+                <p class="itemTodayActivity">Others</p>
+                <p class="itemTodayMinutes">0</p>
               </div>
             </li>
           </ul>
+          <hr class="bold" />
+          <h3 class="showTotalMinutesToday underline">
+            Total: <span id="showTotalMinutesToday"></span>
+          </h3>
+          <div class="none" id="elementToggleToShow">
+            <h3>Game: <span id="totalForGame"></span></h3>
+            <h3>
+              Social Media:
+              <span id="totalForSocialMedia"></span>
+            </h3>
+            <h3>
+              Daily Activities:
+              <span id="totalForDailyActivities"></span>
+            </h3>
+            <h3>Do Nothing: <span id="totalForDoNothing"></span></h3>
+            <h3>Others: <span id="totalForOthers"></span></h3>
+          </div>
         </section>
         <hr class="align-stretch bold" />
         <section

@@ -5,6 +5,13 @@ let todayActions = [];
 let today = {};
 today = {};
 let history = {};
+const translateActionsValueTo = {
+  others: "Others",
+  donothing: "Do nothing",
+  game: "Game",
+  socialmedia: "Social Media",
+  dailyactivities: "Daily Activities",
+};
 
 // select html elements
 const getInputForm = document.querySelector("[data-getInputForm]");
@@ -12,6 +19,11 @@ const addMinutesButtons = document.querySelectorAll(".btn");
 const minutesCount = document.querySelector("#minutesCount");
 const activityRadioButtons = document.querySelectorAll('[name="Activity"]');
 const todayDateIs = document.querySelector("#todayDateIs");
+const todayActivitiesContainer = document.getElementById(
+  "activitiesListContainer"
+);
+const showTotalMinutesToday = document.getElementById("showTotalMinutesToday");
+const radioButtonsNamedOthers = document.querySelector("[value='others']");
 
 //action and its information etc...
 class Action {
@@ -21,6 +33,11 @@ class Action {
     this.todayIs = todayIs;
     this.timeIs = timeIs;
   }
+  pushToTodayActionsAndShowList() {
+    todayActions.push(this);
+    UI.callAllUIMethodsOnce();
+    console.log(todayActions);
+  }
 }
 
 //event listener
@@ -28,22 +45,22 @@ class Event {
   static formSubmit() {
     getInputForm.addEventListener("submit", (e) => {
       e.preventDefault();
+
+      let getTodayDate = whatDayIsToday();
+      let getTodayTime = whatTimeIsIt();
+      let getMinutesCount = Number(minutesCount.textContent);
+      if (getMinutesCount === 0) return;
+      let getActivity;
       activityRadioButtons.forEach((action) => {
-        if (action.checked) {
-          let getTodayDate = whatDayIsToday();
-          let getTodayTime = whatTimeIsIt();
-          let getActivity = action.value;
-          let getMinutesCount = Number(minutesCount.textContent);
-          let newAction = new Action(
-            getMinutesCount,
-            getActivity,
-            getTodayDate,
-            getTodayTime
-          );
-          todayActions.push(newAction);
-        }
+        if (action.checked) getActivity = translateActionsValueTo[action.value];
       });
-      console.log(todayActions);
+      let newAction = new Action(
+        getMinutesCount,
+        getActivity,
+        getTodayDate,
+        getTodayTime
+      );
+      newAction.pushToTodayActionsAndShowList();
     });
   }
   static addMinutesClick() {
@@ -60,10 +77,63 @@ class Event {
       todayDateIs.innerHTML = whatDayIsToday();
     });
   }
+  static callAllEventListenerMethods() {
+    Event.formSubmit();
+    Event.addMinutesClick();
+    Event.showTodayWhenDOMLoaded();
+  }
 }
 
 //change UI
-class UI {}
+class UI {
+  static showTodayActivitiesList() {
+    let html;
+    if (todayActions.length > 1) {
+      html = todayActions
+        .map((action) => {
+          return `<li class="activityItem">
+          <hr/>
+        <p class="itemTodayActivityTimeIs">${action.timeIs}</p>
+        <div class="activityAndMinutesContainer">
+        <p class="itemTodayActivity">${action.activity}</p>
+        <p class="itemTodayMinutes">${action.minutes}</p>
+        </div>
+        </li>`;
+        })
+        .join(" ");
+    }
+    if (todayActions.length === 1) {
+      html = todayActions
+        .map((action) => {
+          return `<li class="activityItem">
+        <p class="itemTodayActivityTimeIs">${action.timeIs}</p>
+        <div class="activityAndMinutesContainer">
+        <p class="itemTodayActivity">${action.activity}</p>
+        <p class="itemTodayMinutes">${action.minutes}</p>
+        </div>
+        </li>`;
+        })
+        .join(" ");
+    }
+    todayActivitiesContainer.innerHTML = html;
+  }
+  static showTotalMinutesToday() {
+    let totalMinutes = 0;
+    todayActions.forEach((action) => {
+      totalMinutes += action.minutes;
+    });
+    showTotalMinutesToday.innerHTML = totalMinutes;
+  }
+  static resetInputFormToDefault() {
+    minutesCount.innerHTML = "0";
+    radioButtonsNamedOthers.checked = true;
+  }
+  static callAllUIMethodsOnce() {
+    UI.showTodayActivitiesList();
+    UI.showTotalMinutesToday();
+    UI.resetInputFormToDefault();
+  }
+}
 
 //storage
 class Storage {}
@@ -99,6 +169,5 @@ function whatTimeIsIt() {
 }
 
 //call methods
-Event.formSubmit();
-Event.addMinutesClick();
-Event.showTodayWhenDOMLoaded();
+Event.callAllEventListenerMethods();
+// UI.callAllUIMethodsOnce();
