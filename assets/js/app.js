@@ -47,9 +47,9 @@ class Storage {
 }
 
 //variables to use
-let todayActions = Storage.getTodayActionsFromStorage();
-let history = Storage.getTodayActionsFromStorageHistory();
-let everySingleActionSoFar = Storage.getEverySingleActionSoFarFromStorage();
+let todayActions;
+let history;
+let everySingleActionSoFar;
 const translateActionsValueTo = {
   others: "Others",
   donothing: "Do Nothing",
@@ -74,6 +74,7 @@ const clearTodayActivities = document.getElementById("clearTodayActivities");
 const clearAllHistoryActivities = document.getElementById(
   "clearAllHistoryActivities"
 );
+const confirmSection = document.getElementById("confirmSection");
 const yesIAm = document.getElementById("yesIAm");
 
 //action and its information etc...
@@ -132,7 +133,6 @@ class Event {
       //FIXME that variable will be named everySingleActionSoFar and will be pushed at the same time with todayActions and will be set to localStorage too.
       Storage.setTodayActionsToStorageHistory(history);
       UI.callAllUIMethodsOnce();
-      console.log(history);
     });
   }
   static addMinutesClick() {
@@ -152,10 +152,35 @@ class Event {
   static showTodayWhenDOMLoaded() {
     window.addEventListener("DOMContentLoaded", () => {
       //when DOM is loaded
+      assignValueToInitVariables();
+      //assign values to initialize variables
       todayDateIs.innerHTML = whatDayIsToday();
       //display today date with function whatDayIsToday()
       UI.callAllUIMethodsOnce();
       //initial UI with content load from localStorage and display on the page and reset form to default
+    });
+  }
+  static clearTodayActivitiesClick() {
+    clearTodayActivities.addEventListener("click", (e) => {
+      Storage.setTodayActionsToStorage([]);
+      const todayDateToClearHistoryOfToday = whatDayIsToday();
+      everySingleActionSoFar = everySingleActionSoFar.filter(
+        (action) => action.todayIs !== todayDateToClearHistoryOfToday
+      );
+      Storage.setEverySingleActionSoFarToStorage(everySingleActionSoFar);
+      delete history[todayDateToClearHistoryOfToday];
+      Storage.setTodayActionsToStorageHistory(history);
+      assignValueToInitVariables();
+      UI.callAllUIMethodsOnce();
+    });
+  }
+  static clearAllHistoryActivitiesClick() {
+    clearAllHistoryActivities.addEventListener("click", (e) => {
+      if (confirmSection.classList.contains("none")) {
+        confirmSection.classList.remove("none");
+      } else {
+        confirmSection.classList.add("none");
+      }
     });
   }
   static confirmClearHistoryActivitiesClick() {
@@ -163,6 +188,8 @@ class Event {
       Storage.setTodayActionsToStorage([]);
       Storage.setTodayActionsToStorageHistory({});
       Storage.setEverySingleActionSoFarToStorage([]);
+      assignValueToInitVariables();
+      confirmSection.classList.add("none");
       UI.callAllUIMethodsOnce();
     });
   }
@@ -170,6 +197,8 @@ class Event {
     Event.showTodayWhenDOMLoaded();
     Event.formSubmit();
     Event.addMinutesClick();
+    Event.clearTodayActivitiesClick();
+    Event.clearAllHistoryActivitiesClick();
     Event.confirmClearHistoryActivitiesClick();
   }
 }
@@ -264,15 +293,26 @@ class UI {
     radioButtonsNamedOthers.checked = true;
   }
   static updateEveryActivityTotalMinutes() {
-    todayActions.forEach((action) => {
-      const stringConvert = action["activity"].split(" ").join("");
-      const idOfThatSpecificActivity = `totalFor${stringConvert}`;
-
+    if (todayActions.length === 0) {
+      ["Game", "SocialMedia", "DailyActivities", "Others", "DoNothing"].forEach(
+        (el) => {
+          const idOfThatSpecificActivity = `totalFor${el}`;
+          const element = document.getElementById(idOfThatSpecificActivity);
+          element.innerHTML = "0";
+        }
+      );
+    }
+    let obj = todayActions.reduce((total, current) => {
+      const key = current.activity;
+      const value = total[key] ?? 0;
+      return { ...total, [key]: value + current.minutes };
+    }, {});
+    for (const key in obj) {
+      const convertKeyToUseToSelectElementById = key.split(" ").join("");
+      const idOfThatSpecificActivity = `totalFor${convertKeyToUseToSelectElementById}`;
       const element = document.getElementById(idOfThatSpecificActivity);
-      const elementInnerHTMLNumber =
-        Number(element.innerHTML) + action["minutes"];
-      element.innerHTML = elementInnerHTMLNumber;
-    });
+      element.innerHTML = obj[key];
+    }
   }
   static callAllUIMethodsOnce() {
     UI.showTodayActivitiesList();
@@ -322,6 +362,11 @@ function groupByDate(objectsArray, property) {
     //then we declared value variable is the value of total object's key property.if this value is null or undefined, it will return an empty array, if not, it will return the value of that key property.( value will be an array)
     return { ...total, [key]: [...value, current] };
   }, {});
+}
+function assignValueToInitVariables() {
+  todayActions = Storage.getTodayActionsFromStorage();
+  history = Storage.getTodayActionsFromStorageHistory();
+  everySingleActionSoFar = Storage.getEverySingleActionSoFarFromStorage();
 }
 
 //call methods
