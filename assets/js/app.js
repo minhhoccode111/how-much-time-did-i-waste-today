@@ -70,6 +70,12 @@ const todayActivitiesContainer = document.getElementById(
 const showTotalMinutesToday = document.getElementById("showTotalMinutesToday");
 const radioButtonsNamedOthers = document.querySelector("[value='others']");
 const ulToAppendHistoryList = document.getElementById("ulToAppendHistoryList");
+const clearTodayActivities = document.getElementById("clearTodayActivities");
+const clearAllHistoryActivities = document.getElementById(
+  "clearAllHistoryActivities"
+);
+const yesIAm = document.getElementById("yesIAm");
+
 //action and its information etc...
 class Action {
   constructor(minutes, activity, todayIs, timeIs) {
@@ -152,10 +158,19 @@ class Event {
       //initial UI with content load from localStorage and display on the page and reset form to default
     });
   }
+  static confirmClearHistoryActivitiesClick() {
+    yesIAm.addEventListener("click", (e) => {
+      Storage.setTodayActionsToStorage([]);
+      Storage.setTodayActionsToStorageHistory({});
+      Storage.setEverySingleActionSoFarToStorage([]);
+      UI.callAllUIMethodsOnce();
+    });
+  }
   static callAllEventListenerMethods() {
     Event.showTodayWhenDOMLoaded();
     Event.formSubmit();
     Event.addMinutesClick();
+    Event.confirmClearHistoryActivitiesClick();
   }
 }
 
