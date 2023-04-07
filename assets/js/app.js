@@ -8,7 +8,7 @@ class Storage {
     // todayDate = "2023 April 7";
     //then declare a variable named todayDate and assign value returns from whatDayIsToday function (ex: 2023 April 7)
     localStorage.setItem(todayDate, JSON.stringify(arr));
-    // localStorage.setItem(todayDate, JSON.stringify([])); //use this line to reset localStorage, remember to change back //FIXME
+    localStorage.setItem(todayDate, JSON.stringify([])); //use this line to reset localStorage, remember to change back //FIXME
     //and then we setItem to localStorage by using JSON.stringify to convert our todayActions array to string
     //and because we set the name of that array is the date that array has been created so we will have a new array everyday
   }
@@ -18,17 +18,30 @@ class Storage {
       localStorage.getItem(todayDate) === null
         ? []
         : JSON.parse(localStorage.getItem(todayDate));
-    // storage = []; //use this line to reset localStorage, remember to change back //FIXME
+    storage = []; //use this line to reset localStorage, remember to change back //FIXME
     return storage;
   }
   static setTodayActionsToStorageHistory(obj) {
     localStorage.setItem("storageHistory", JSON.stringify(obj));
+    localStorage.setItem("storageHistory", JSON.stringify({})); // use this line to reset localStorage, remember to change back //FIXME
   }
   static getTodayActionsFromStorageHistory() {
     let storage =
       localStorage.getItem("storageHistory") === null
         ? {}
         : JSON.parse(localStorage.getItem("storageHistory"));
+    storage = {}; //use this line to reset localStorage, remember to change back //FIXME
+    return storage;
+  }
+  static setEverySingleActionSoFarToStorage(arr) {
+    localStorage.setItem("everySingleActionSoFar", JSON.stringify(arr));
+  }
+  static getEverySingleActionSoFarFromStorage() {
+    let storage =
+      localStorage.getItem("everySingleActionSoFar") === null
+        ? []
+        : JSON.parse(localStorage.getItem("everySingleActionSoFar"));
+    // storage = []; //use this line to reset localStorage,remember to change back //FIXME
     return storage;
   }
 }
@@ -36,6 +49,7 @@ class Storage {
 //variables to use
 let todayActions = Storage.getTodayActionsFromStorage();
 let history = Storage.getTodayActionsFromStorageHistory();
+let everySingleActionSoFar = Storage.getEverySingleActionSoFarFromStorage();
 const translateActionsValueTo = {
   others: "Others",
   donothing: "Do Nothing",
@@ -55,7 +69,7 @@ const todayActivitiesContainer = document.getElementById(
 );
 const showTotalMinutesToday = document.getElementById("showTotalMinutesToday");
 const radioButtonsNamedOthers = document.querySelector("[value='others']");
-
+const ulToAppendHistoryList = document.getElementById("ulToAppendHistoryList");
 //action and its information etc...
 class Action {
   constructor(minutes, activity, todayIs, timeIs) {
@@ -103,11 +117,13 @@ class Event {
       //then we push newAction instance to todayActions array
       Storage.setTodayActionsToStorage(todayActions);
       //then we update todayActions array to localStorage
-      history = groupByDate(todayActions, "todayIs");
+      everySingleActionSoFar.push(newAction);
+      Storage.setEverySingleActionSoFarToStorage(everySingleActionSoFar);
+      history = groupByDate(everySingleActionSoFar, "todayIs");
       //FIXME fix this history variable because if it use function groupByDate that takes 2 arguments (1 is an array that contains every Action's instance we created by submitting to form, and 1 is a property name tell it to group by every value existed of the property name)
       //FIXME but this is not going to work because if we use this function with todayActions array (which will be re-created everyday) then the history variable is only contains actions of 1 day (instead of everyday from the beginning when we start using the app)
       //FIXME this is missing logic that we've made. So to be able to fix this, we must create another variable (which is an array) that will contain every Action's instance we've been created so far.
-      //FIXME that variable will be named everySingleActionSoFar and will be pushed at the same time with todayActions and will be set
+      //FIXME that variable will be named everySingleActionSoFar and will be pushed at the same time with todayActions and will be set to localStorage too.
       Storage.setTodayActionsToStorageHistory(history);
       UI.callAllUIMethodsOnce();
       console.log(history);
@@ -185,6 +201,42 @@ class UI {
     }
     todayActivitiesContainer.innerHTML = html;
   }
+  static showHistoryActivitiesList() {
+    let html;
+    let historyShort = {};
+    let allKeysOfHistory = Object.keys(history);
+    if (allKeysOfHistory.length >= 1) {
+      for (const prop in history) {
+        historyShort[prop] = history[prop].reduce(
+          (total, current) => total + current["minutes"],
+          0
+        );
+      }
+      let allKeysOfHistoryShort = Object.keys(historyShort);
+      html = allKeysOfHistoryShort
+        .map((current, index) => {
+          if (index === 0) {
+            return `<li class="totalMinutesWastedEachDate">
+          <p class="showEachDateOfHistory">${current}</p>
+          <p class="totalMinutedWasted">${historyShort[current]}</p>
+        </li>`;
+          }
+          return `<hr>
+        <li class="totalMinutesWastedEachDate">
+        <p class="showEachDateOfHistory">${current}</p>
+        <p class="totalMinutedWasted">${historyShort[current]}</p>
+      </li>`;
+        })
+        .join(" ");
+    }
+    if (allKeysOfHistory.length === 0) {
+      html = `<li class="totalMinutesWastedEachDate">
+      <p class="showEachDateOfHistory">${whatDayIsToday()}</p>
+      <p class="totalMinutedWasted">0</p>
+    </li>`;
+    }
+    ulToAppendHistoryList.innerHTML = html;
+  }
   static showTotalMinutesToday() {
     let totalMinutes = 0;
     todayActions.forEach((action) => {
@@ -209,6 +261,7 @@ class UI {
   }
   static callAllUIMethodsOnce() {
     UI.showTodayActivitiesList();
+    UI.showHistoryActivitiesList();
     UI.showTotalMinutesToday();
     UI.resetInputFormToDefault();
     UI.updateEveryActivityTotalMinutes();
