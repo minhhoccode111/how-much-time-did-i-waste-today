@@ -4,11 +4,11 @@
 class Storage {
   static setTodayActionsToStorage(arr) {
     //setTodayActionsToStorage method will take an array as its argument
-    const todayDate = whatDayIsToday(); //remember to change back //FIXME
-    // todayDate = "2023 April 7";
+    const todayDate = whatDayIsToday();
+    // todayDate = "2023 April 7"; //use this line to test, remember to change back //FIXME
     //then declare a variable named todayDate and assign value returns from whatDayIsToday function (ex: 2023 April 7)
     localStorage.setItem(todayDate, JSON.stringify(arr));
-    localStorage.setItem(todayDate, JSON.stringify([])); //use this line to reset localStorage, remember to change back //FIXME
+    // localStorage.setItem(todayDate, JSON.stringify([])); //use this line to reset localStorage, remember to change back //FIXME
     //and then we setItem to localStorage by using JSON.stringify to convert our todayActions array to string
     //and because we set the name of that array is the date that array has been created so we will have a new array everyday
   }
@@ -18,19 +18,19 @@ class Storage {
       localStorage.getItem(todayDate) === null
         ? []
         : JSON.parse(localStorage.getItem(todayDate));
-    storage = []; //use this line to reset localStorage, remember to change back //FIXME
+    // storage = []; //use this line to reset localStorage, remember to change back //FIXME
     return storage;
   }
   static setTodayActionsToStorageHistory(obj) {
     localStorage.setItem("storageHistory", JSON.stringify(obj));
-    localStorage.setItem("storageHistory", JSON.stringify({})); // use this line to reset localStorage, remember to change back //FIXME
+    // localStorage.setItem("storageHistory", JSON.stringify({})); // use this line to reset localStorage, remember to change back //FIXME
   }
   static getTodayActionsFromStorageHistory() {
     let storage =
       localStorage.getItem("storageHistory") === null
         ? {}
         : JSON.parse(localStorage.getItem("storageHistory"));
-    storage = {}; //use this line to reset localStorage, remember to change back //FIXME
+    // storage = {}; //use this line to reset localStorage, remember to change back //FIXME
     return storage;
   }
   static setEverySingleActionSoFarToStorage(arr) {
