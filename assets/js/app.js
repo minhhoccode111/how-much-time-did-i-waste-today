@@ -3,10 +3,14 @@
 //storage
 class Storage {
   static setTodayActionsToStorage(arr) {
-    const todayDate = whatDayIsToday(); //remember to change back
+    //setTodayActionsToStorage method will take an array as its argument
+    const todayDate = whatDayIsToday(); //remember to change back //FIXME
     // todayDate = "2023 April 7";
+    //then declare a variable named todayDate and assign value returns from whatDayIsToday function (ex: 2023 April 7)
     localStorage.setItem(todayDate, JSON.stringify(arr));
-    // localStorage.setItem(todayDate, JSON.stringify([])); //use this line to reset localStorage, remember to change back
+    // localStorage.setItem(todayDate, JSON.stringify([])); //use this line to reset localStorage, remember to change back //FIXME
+    //and then we setItem to localStorage by using JSON.stringify to convert our todayActions array to string
+    //and because we set the name of that array is the date that array has been created so we will have a new array everyday
   }
   static getTodayActionsFromStorage() {
     const todayDate = whatDayIsToday();
@@ -14,7 +18,7 @@ class Storage {
       localStorage.getItem(todayDate) === null
         ? []
         : JSON.parse(localStorage.getItem(todayDate));
-    // storage = []; //use this line to reset localStorage, remember to change back
+    // storage = []; //use this line to reset localStorage, remember to change back //FIXME
     return storage;
   }
   static setTodayActionsToStorageHistory(obj) {
@@ -60,53 +64,76 @@ class Action {
     this.todayIs = todayIs;
     this.timeIs = timeIs;
   }
-  pushToTodayActionsAndUpdateHistory() {
-    todayActions.push(this);
-  }
 }
 
 //event listener
 class Event {
   static formSubmit() {
     getInputForm.addEventListener("submit", (e) => {
+      //when form has submit event
       e.preventDefault();
-      let getTodayDate = whatDayIsToday();
-      let getTodayTime = whatTimeIsIt();
       let getMinutesCount = Number(minutesCount.textContent);
+      //getMinutesCount variable take minutesCount element's text content value (what we display on the page) after converting to number
       if (getMinutesCount === 0) return;
+      //but if is 0 (mean the activity take 0 minutes and that's meaningless) then we just ignore it and return
+      //preventDefault so that it won't load the page again
+      let getTodayDate = whatDayIsToday();
+      //getTodayDate variable use function whatDayIsToday to get date (Ex:2023 April 6)
+      let getTodayTime = whatTimeIsIt();
+      //getTodayTime variable use function whatTimeIsIt to get the time when we submit the form (Ex: 15:36)
       let getActivity;
+      //declare a variable named getActivity to contain activity value of the form
       activityRadioButtons.forEach((action) => {
+        //then we loop through every radio button to check
         if (action.checked) getActivity = translateActionsValueTo[action.value];
+        //if the radio button is checked then we translate if through translateActionsValueTo object with its value and assign to getActivity variable
       });
-      let newAction = new Action(
+      const newAction = new Action(
+        //then we create a new Action's instance with
         getMinutesCount,
+        //minutes of instance is getMinutesCount variable
         getActivity,
+        //activity of instance is getActivity variable
         getTodayDate,
+        //todayIs of instance is getTodayDate variable
         getTodayTime
+        //timeIs of instance is getTodayTime variable
       );
-      newAction.pushToTodayActionsAndUpdateHistory();
+      todayActions.push(newAction);
+      //then we push newAction instance to todayActions array
       Storage.setTodayActionsToStorage(todayActions);
+      //then we update todayActions array to localStorage
       history = groupByDate(todayActions, "todayIs");
+      //FIXME fix this history variable because if it use function groupByDate that takes 2 arguments (1 is an array that contains every Action's instance we created by submitting to form, and 1 is a property name tell it to group by every value existed of the property name)
+      //FIXME but this is not going to work because if we use this function with todayActions array (which will be re-created everyday) then the history variable is only contains actions of 1 day (instead of everyday from the beginning when we start using the app)
+      //FIXME this is missing logic that we've made. So to be able to fix this, we must create another variable (which is an array) that will contain every Action's instance we've been created so far.
+      //FIXME that variable will be named everySingleActionSoFar and will be pushed at the same time with todayActions and will be set
       Storage.setTodayActionsToStorageHistory(history);
       UI.callAllUIMethodsOnce();
-      UI.updateEveryActivityTotalMinutes(); //FIXME
       console.log(history);
     });
   }
   static addMinutesClick() {
     addMinutesButtons.forEach((button) => {
+      //loop through every button of addMinutesButtons object
       button.addEventListener("click", (e) => {
+        //listen for each button event click
         let currentMinutes = Number(minutesCount.textContent);
+        //assign current minutes currently display on the web to a variable named currentMinutes after convert its type to number
         let addUpValue = Number(e.target.textContent);
+        //assign a value of the button we clicked (value of button is its textContent, is anything it display) after we convert its value (usually string) to number to a variable named addUpValue
         minutesCount.innerHTML = currentMinutes + addUpValue;
+        //and display it by assigning value of the calculation(currentMinutes is minutesCount display on page and addUpValue is value of button we clicked) to innerHTML
       });
     });
   }
   static showTodayWhenDOMLoaded() {
     window.addEventListener("DOMContentLoaded", () => {
+      //when DOM is loaded
       todayDateIs.innerHTML = whatDayIsToday();
+      //display today date with function whatDayIsToday()
       UI.callAllUIMethodsOnce();
-      UI.updateEveryActivityTotalMinutes();
+      //initial UI with content load from localStorage and display on the page and reset form to default
     });
   }
   static callAllEventListenerMethods() {
@@ -184,6 +211,7 @@ class UI {
     UI.showTodayActivitiesList();
     UI.showTotalMinutesToday();
     UI.resetInputFormToDefault();
+    UI.updateEveryActivityTotalMinutes();
   }
 }
 
@@ -230,4 +258,6 @@ function groupByDate(objectsArray, property) {
 
 //call methods
 Event.callAllEventListenerMethods();
-// UI.callAllUIMethodsOnce();
+//call all event listener methods first because it has DOM content loaded event that should be call when the page first load
+//and buttons click event listener to change minutes display on form
+//and form submit event to create new Action Constructor instance
