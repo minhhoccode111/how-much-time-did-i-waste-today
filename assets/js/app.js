@@ -345,6 +345,7 @@ function whatDayIsToday() {
   let day = date.getDate();
   let year = date.getFullYear();
   return `${year} ${month} ${day}`;
+  // return `2023 April 11`; //use this line to test, remember to change back //FIXME
 }
 function whatTimeIsIt() {
   let date = new Date();
